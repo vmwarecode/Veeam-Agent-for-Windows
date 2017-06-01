@@ -1,6 +1,6 @@
 '@type': "SoftwareComponentType"
 createdDate: "2017-05-24T01:08:56.290Z"
-lastUpdated: "2017-05-25T14:55:10.643Z"
+lastUpdated: "2017-06-01T15:42:38.069Z"
 id: "Software.VeeamAgentforWindows"
 name: "Veeam Agent for Windows"
 description: "Installs the Veeam Agent for Windows and licenses it using a .lic file.\
@@ -100,7 +100,7 @@ schema:
           type: "constant"
           value:
             type: "string"
-            value: "myserver.domain.com\\Path\\Software\\Veeam\\Windows Agent"
+            value: "server.domain.com\\path\\Software\\Veeam\\Windows Agent"
       - type: "mandatory"
         value:
           type: "constant"
@@ -161,26 +161,54 @@ schema:
             type: "boolean"
             value: true
     isMultiValued: false
+  - id: "edition"
+    label: "edition"
+    description: "Sets the license edition for the agent and must be either \"workstation\"\
+      \ or \"server\" without quotes."
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "server"
+    isMultiValued: false
 containerFieldId: "host"
 lifecycleTasks:
 - createdDate: "2017-05-25T14:13:11.091Z"
-  lastUpdated: "2017-05-25T14:55:10.643Z"
+  lastUpdated: "2017-06-01T15:58:01.827Z"
   script:
-    scriptContent: "###Add the license file.###\nWrite-Output \"Adding the license\
-      \ file.\"\n$licenseargs = \"/f:\"\"\\\\$sharepath\\$agentlicense\"\"\"\n$agentinstall\
-      \ = Start-Process 'C:\\Program Files\\Veeam\\Endpoint Backup\\Veeam.Agent.Configurator.exe'\
+    scriptContent: "###Determine the edition and set the flag accordingly.###\nif\
+      \ ($edition -eq \"workstation\"){\n    $ed = \"w\"\n    }\nelseif ($edition\
+      \ -eq \"server\"){\n    $ed = \"s\"\n    }\nelse {\n    Write-Output \"The edition\
+      \ property is not set correctly, so you will have to license the agent manually.\
+      \ Check to ensure the spelling of either server or workstation is correct.\"\
+      \n    exit 0}\n###Add the license file.###\nWrite-Output \"Adding the license\
+      \ file.\"\n$licenseargs = \"/f:\"\"\\\\$sharepath\\$agentlicense\"\" /$ed\"\n\
+      $agentinstall = Start-Process 'C:\\Program Files\\Veeam\\Endpoint Backup\\Veeam.Agent.Configurator.exe'\
       \ -ArgumentList '-license', $licenseargs  -Wait -PassThru -ErrorAction Stop\n\
       ###Check the exit code. If it's not zero, it wasn't successful.###\nif ($agentinstall.ExitCode\
       \ -ne 0)\n    {\n    Write-Output \"The license failed to add.\"\n    exit 1}\n\
-      else\n    {\n    Write-Output \"The license file was added successfully.\"\n\
-      \    exit 0\n    }"
+      else\n    {\n    Write-Output \"The license file was added successfully and\
+      \ set to the $edition edition.\"\n    exit 0\n    }"
     isRebootAfter: false
     scriptTypeId: "powershell"
   taskDescriptorRef:
     id: "CONFIGURE"
     label: "Configure"
 - createdDate: "2017-05-24T01:08:56.293Z"
-  lastUpdated: "2017-05-25T14:55:10.643Z"
+  lastUpdated: "2017-06-01T15:58:01.827Z"
   script:
     scriptContent: "###Mounting remote software share###\nWrite-Output \"Mounting\
       \ remote software repo.\"\nnet use \\\\$sharepath /user:$shareuser $sharepass\

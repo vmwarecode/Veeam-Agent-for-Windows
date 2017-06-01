@@ -1,4 +1,4 @@
-name: "auto-generated-pkg-bffb15b1-8a7c-4c40-b56c-a8d308294958"
+name: "auto-generated-pkg-485107b3-b07c-462b-bcff-d26af1f88f53"
 productVersion: "7.2.0-SNAPSHOT"
 data:
 - locator: "software-component/Software.VeeamAgentforWindows.yaml"
@@ -6,4 +6,4 @@ data:
   description: "Installs the Veeam Agent for Windows and licenses it using a .lic\
     \ file. Both the .exe and .lic files must be on the same SMB share accessible\
     \ to the deployed system using the credentials set in the Properties section."
-exportTime: "2017-05-25T20:59:34.601Z"
+exportTime: "2017-06-01T16:14:48.039Z"
